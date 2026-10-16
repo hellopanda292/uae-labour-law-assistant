@@ -66,6 +66,12 @@ export const QUERY_EXPANSIONS: [RegExp, string][] = [
   [/\b(fine|fines|penalty|penalties|punish)\b/, "fine penalty"],
   [/\b(child|children|minor|teenager|under 18)\b/, "juvenile"],
   [/\b(equal pay|discrimination|discriminate)\b/, "discrimination equal"],
+  [/\b(die|dies|died|death|passed away|funeral|bereavement)\b/, "death mourning"],
+  [/\b(\d{1,2}[- ]years?[- ]old|age|minor|teen|teenager|under 18|child labour)\b/, "juvenile employ fifteen eighteen"],
+  [/\b(final settlement|full and final|final pay|dues|settlement)\b/, "entitlements end contract pay"],
+  [/\b(unpaid leave|no pay leave|leave without pay)\b/, "leave without pay"],
+  [/\b(company (is )?sold|new owner|takeover|taken over|merger|merged|acquired|acquisition)\b/, "change form legal status establishment new employer"],
+  [/\b(immediately|straight away|right away|without notice|no notice|no warning)\b/, "without warning"],
 ];
 
 export function expandQuery(q: string) {

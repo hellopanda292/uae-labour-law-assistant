@@ -38,6 +38,8 @@ export interface GratuityResult {
 
 const DAY_MS = 86_400_000;
 const round2 = (n: number) => Math.round(n * 100) / 100;
+// Years for display: small fractions keep 3 decimals so they don't show as "0 years".
+const yrs = (n: number) => String(Number(n.toFixed(n > 0 && n < 0.1 ? 3 : 2)));
 
 export function serviceDaysBetween(start: string, end: string) {
   const s = Date.parse(start + "T00:00:00Z");
@@ -66,7 +68,7 @@ export function calculateGratuity(input: GratuityInput): GratuityResult {
   if (input.national) {
     return { ...base, eligible: false, reason: "UAE nationals receive end-of-service benefits under the pensions and social security law, not this formula.", steps: [{ text: "National workers: pensions and social security legislation applies.", article: "51.1" }] };
   }
-  steps.push({ text: `Service counted: ${Math.round(serviceDays).toLocaleString("en-US")} days${absence ? ` (after removing ${absence} unpaid absence days)` : ""} = ${round2(serviceYears)} years, with a year of 365 days.`, article: absence ? "51.4, 67" : "67" });
+  steps.push({ text: `Service counted: ${Math.round(serviceDays).toLocaleString("en-US")} days${absence ? ` (after removing ${absence} unpaid absence days)` : ""} = ${yrs(serviceYears)} years, with a year of 365 days.`, article: absence ? "51.4, 67" : "67" });
   if (serviceDays < 365) {
     return { ...base, eligible: false, reason: "Less than one year of continuous service, so no gratuity is due.", steps: [...steps, { text: "A gratuity needs at least one full year of continuous service.", article: "51.2, 51.3" }] };
   }
@@ -79,8 +81,8 @@ export function calculateGratuity(input: GratuityInput): GratuityResult {
   const gratuity = Math.min(uncapped, cap);
 
   steps.push({ text: `One day's basic wage: AED ${wage.toLocaleString("en-US")} ÷ 30 = AED ${round2(daily).toLocaleString("en-US")} (a month counts as 30 days).`, article: "51.5, 67" });
-  steps.push({ text: `First ${round2(at21)} years × 21 days = ${round2(at21 * 21)} days.`, article: "51.2(a), 51.3" });
-  if (at30 > 0) steps.push({ text: `Remaining ${round2(at30)} years × 30 days = ${round2(at30 * 30)} days.`, article: "51.2(b), 51.3" });
+  steps.push({ text: `First ${yrs(at21)} years × 21 days = ${round2(at21 * 21)} days.`, article: "51.2(a), 51.3" });
+  if (at30 > 0) steps.push({ text: `Remaining ${yrs(at30)} years × 30 days = ${round2(at30 * 30)} days.`, article: "51.2(b), 51.3" });
   steps.push({ text: `${round2(gratuityDays)} days × AED ${round2(daily).toLocaleString("en-US")} = AED ${round2(uncapped).toLocaleString("en-US")}.`, article: "51.2" });
   if (uncapped > cap) steps.push({ text: `Capped at two years' wage: 24 × AED ${wage.toLocaleString("en-US")} = AED ${cap.toLocaleString("en-US")}.`, article: "51.6" });
 
